@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qintao.mapper.UserMapper">
+  <sql id="Base_Column_List">
+    id, name, mobile, password, salt, role, created_time, modified_time
+  </sql>
+
+  <insert id="insert">
+    INSERT INTO tb_user
+    (name, mobile, password, salt, role, created_time, modified_time)
+    VALUES
+    (#{name}, #{mobile}, #{password}, #{salt}, #{role}, now(), now())
+  </insert>
+
+  <select id="selectForLogin" resultType="com.qintao.bean.User">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM tb_user
+    WHERE mobile = #{mobile}
+    AND password = #{password}
+  </select>
+
+  <select id="selectByMobile" resultType="com.qintao.bean.User">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM tb_user
+    WHERE mobile = #{mobile}
+  </select>
+
+</mapper>

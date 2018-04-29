@@ -1,3 +1,4 @@
+<#import "spring.ftl" as s>
 <!doctype html>
 <html lang="en">
 <head>
@@ -13,49 +14,49 @@
     <link rel="stylesheet" href="/css/xadmin.css">
     <script src="/js/layui.js" charset="utf-8"></script>
     <script type="text/javascript" src="/js/xadmin.js"></script>
+    <link rel="stylesheet" type="text/css" href="plugins/sweetAlert/sweetalert.css"/>
 
 </head>
 <body class="login-bg">
 
-<div class="login">
+<div class="login" id="app">
     <div class="message">后台登录</div>
     <div id="darkbannerwrap"></div>
 
-    <form method="post" class="layui-form" >
-        <input name="username" placeholder="用户名"  type="text" lay-verify="required" class="layui-input" >
+        <input name="mobile" placeholder="用户名"  type="text" class="layui-input" v-model="user.mobile">
         <hr class="hr15">
-        <input name="password" lay-verify="required" placeholder="密码"  type="password" class="layui-input">
+        <input name="password" placeholder="密码"  type="password" class="layui-input" v-model="user.password">
         <hr class="hr15">
-        <input value="登录" lay-submit lay-filter="login" style="width:100%;" type="submit">
-        <hr class="hr20" >
-    </form>
+        <input value="登录" lay-submit lay-filter="login" style="width:100%;" type="submit" v-on:click="login">
+        <hr class="hr20">
+
 </div>
-
+<#include 'include/footer.ftl'/>
 <script>
-    $(function  () {
-        layui.use('form', function(){
-            var form = layui.form;
-            // layer.msg('玩命卖萌中', function(){
-            //   //关闭后的操作
-            //   });
-            //监听提交
-            form.on('submit(login)', function(data){
-                // alert(888)
-                layer.msg(JSON.stringify(data.field),function(){
-                    location.href='index.html'
+    var app = new Vue({
+        el: '#app',
+        data: {
+            user: {}
+        },
+        created: function () {
+
+        },
+        methods: {
+            login: function () {
+                var url = "/api/user/login";
+                this.$http.post(url, this.user).then(function (response) {
+                    console.log(response.data);
+                    if (response.data.retcode == 2000000) {
+                        window.location.href = "/";
+                    } else {
+                        swal("", response.data.msg, "error");
+                    }
+                }, function (error) {
+                    swal(error.body.msg);
                 });
-                return false;
-            });
-        });
-    })
-
-
-</script>
-
-
-<!-- 底部结束 -->
-<script>
-
+            }
+        }
+    });
 </script>
 </body>
 </html>

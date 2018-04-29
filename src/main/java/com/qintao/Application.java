@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @SpringBootApplication
 @EnableScheduling
 @EnableTransactionManagement
-@MapperScan("com.qintao")
+@MapperScan("com.qintao.mapper")
 public class Application extends SpringBootServletInitializer {
 
     public static void main(String[] args){
