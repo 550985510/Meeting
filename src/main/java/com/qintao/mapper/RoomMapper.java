@@ -9,4 +9,8 @@ public interface RoomMapper {
     void insert(Room room);
 
     List<Room> selectList(Room room);
+
+    List<Room> selectAll();
+
+    Room selectById(Integer roomId);
 }

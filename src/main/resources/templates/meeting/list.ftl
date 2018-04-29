@@ -6,8 +6,7 @@
     <title>秦涛会议管理系统</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="<@s.url '/css/jquery.pagination.css'/>">
-    <link href='<@s.url '/plugins/fullcalender/fullcalendar.min.css'/>' rel='stylesheet' />
-    <link href='<@s.url '/plugins/fullcalender/fullcalendar.print.min.css'/>' media='print' />
+    <link rel="stylesheet" type="text/css" href="<@s.url '/plugins/daterange/daterangepicker.css'/>">
 <#include '../include/baselink.ftl'>
 </head>
 <body class="dashboard-page">
@@ -19,11 +18,105 @@
                     <span class="panel-icon">
                         <i class="fa fa-bar-chart-o"></i>
                     </span>
-                    <span class="panel-title"> 会议列表</span>
+                    <span class="panel-title"> 会议室列表</span>
                 </div>
                 <div class="panel-body">
-                    <div id="calendar"></div>
-
+                    <div class="well">
+                        <form class="form-inline">
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <label class="input-group-addon btn-default" for="realName_input">申请人姓名</label>
+                                    <select id="realName_input" type="text" v-model="searchInfo.userId"
+                                           class="form-control">
+                                        <option value="">全部</option>
+                                        <option v-for="user in users" :value="user.id">{{user.name}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <label class="input-group-addon btn-default" for="realName_input">会议室名称</label>
+                                    <select id="realName_input" type="text" v-model="searchInfo.roomId"
+                                            class="form-control">
+                                        <option value="">全部</option>
+                                        <option v-for="room in rooms" :value="room.id">{{room.name}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <label class="input-group-addon btn-default" for="mobile_input">会议室申请状态</label>
+                                    <select id="mobile_input" type="text" v-model="searchInfo.status"
+                                            class="form-control">
+                                        <option value="">全部</option>
+                                        <option value="0">待审批</option>
+                                        <option value="1">通过</option>
+                                        <option value="1">未通过</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <div class="input-group-addon btn btn-default">开始使用时间</div>
+                                    <input type="text" class="form-control" id="dateTimeRange">
+                                    <div class="input-group-addon btn btn-default">
+                                        <i class="glyphicon glyphicon-calendar fa fa-calendar"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group input-group">
+                                <span class="input-group-btn">
+                                    <button type="button" class="btn btn-default" v-on:click="search">
+                                        <span class="fa fa-search"></span> 查询
+                                    </button>
+                                </span>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th>编号</th>
+                                <th>申请人姓名</th>
+                                <th>会议主题</th>
+                                <th>开始使用时间</th>
+                                <th>结束使用时间</th>
+                                <th>会议室名称</th>
+                                <th>会议室申请状态</th>
+                                <th>创建时间</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr v-for="meeting in meetings">
+                                <td>{{meeting.id}}</td>
+                                <td>{{meeting.userName}}</td>
+                                <td>{{meeting.title}}</td>
+                                <td>{{meeting.startTime}}</td>
+                                <td>{{meeting.endTime}}</td>
+                                <td>{{meeting.roomName}}</td>
+                                <td>
+                                    <label v-if="meeting.status === 0" class="label label-warning">待审批</label>
+                                    <label v-if="meeting.status === 1" class="label label-success">通过</label>
+                                    <label v-if="meeting.status === 2" class="label label-danger">未通过</label>
+                                </td>
+                                <td>{{meeting.createdTime}}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-center" colspan="20" v-if="meetings.length == 0">没有数据 ！</td>
+                            </tr>
+                            </tbody>
+                            <tfoot>
+                            <tr>
+                                <td colspan="20">
+                                    <div class="table-responsive">
+                                        <div id="pageMenu"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -31,43 +124,132 @@
 </div>
 <#include '../include/footer.ftl'/>
 <script src="<@s.url '/js/jquery.pagination-1.2.7.js'/>"></script>
-<script src='<@s.url '/js/moment.min.js'/>'></script>
-<script src='<@s.url '/plugins/fullcalender/fullcalendar.min.js'/>'></script>
-<script src='<@s.url '/plugins/fullcalender/locale/zh-cn.js'/>'></script>
-<script type="text/javascript">
-</script>
+<script src="<@s.url '/plugins/daterange/moment.js'/>"></script>
+<script src="<@s.url '/plugins/daterange/daterangepicker.js'/>"></script>
+<!-- Charts JS -->
 <script>
     var app = new Vue({
         el: '#main',
         data: {
-            now: new Date(),
-            meetingEvent: []
+            meetings: [],
+            searchInfo: {
+                dateRangeStart:'',
+                dateRangeEnd:'',
+                userId: '',
+                roomId: '',
+                status: '',
+                page: 1,
+                pageSize: 30
+            },
+            meeting: {},
+            users: [],
+            rooms: []
         },
         created: function () {
+            this.searchInfo.page = 1;
+            $('#pageMenu').page('destroy');
+            this.query();
+            this.userList();
+            this.roomList();
         },
         mounted: function () {
             this.init();
         },
         watch: {
-
+            "searchInfo.page": function () {
+                this.query();
+            }
         },
         methods: {
             init: function () {
-                $('#calendar').fullCalendar({
-                    defaultDate: this.now,
-                    editable: true,
-                    eventLimit: true, // allow "more" link when too many events
-                    events: this.meetingEvent,
-                    dayClick : function( date ) {
-                        //do something here...
-                        console.log('dayClick触发的时间为：', date.format());
-                        // ...
+                var start = moment().date(20).subtract(1, "months").add(1, 'days');
+                var end = moment().date(20);
+                if (moment().format("D") > 20) {
+                    start = moment().date(21);
+                    end = moment().date(20).add(1, "months");
+                }
+                $("#dateTimeRange").daterangepicker({
+                    applyClass: 'btn-sm btn-success',
+                    cancelClass: 'btn-sm btn-default',
+                    opens: 'right',
+                    separator: ' - ',
+                    showWeekNumbers: true,
+                    startDate: start,
+                    endDate: end,
+                    ranges: {
+                        '标准': [start, end],
+                        '今日': [moment().startOf('day'), moment().add( 'days',1)],
+                        '昨日': [moment().subtract(1, 'days').startOf('day'), moment()],
+                        '最近7日': [moment().subtract(6, 'days'), moment()],
+                        '最近30日': [moment().subtract(29, 'days'), moment()],
+                        '本月': [moment().startOf("month"), moment().endOf("month")],
+                        '上个月': [moment().subtract(1, "month").startOf("month"), moment().subtract(1, "month").endOf("month")]
+                    },
+                    locale: {
+                        format: 'YYYY-MM-DD',
+                        applyLabel: '确认',
+                        cancelLabel: '取消',
+                        fromLabel: '起始时间',
+                        toLabel: '结束时间',
+                        customRangeLabel: '自定义',
+                        daysOfWeek: "日,一,二,三,四,五,六".split(","),
+                        monthNames: "一月,二月,三月,四月,五月,六月,七月,八月,九月,十月,十一,十二月".split(","),
+                        firstDay: 1
                     }
+                }, function (start, end, label) {
+                    app.searchInfo.dateRangeStart = start.format('YYYY-MM-DD');
+                    app.searchInfo.dateRangeEnd = end.format('YYYY-MM-DD');
+                });
+            },
+            search: function () {
+                this.searchInfo.page = 1;
+                $('#pageMenu').page('destroy');//销毁分页
+                this.query();
+            },
+            query: function () {
+                var url = "/api/meeting/list";
+                this.$http.post(url, this.searchInfo).then(function (response) {
+                    this.meetings = response.data.data.list;
+                    var temp = this;
+                    $("#pageMenu").page({//加载分页
+                        total: response.data.data.total,
+                        pageSize: response.data.data.pageSize,
+                        firstBtnText: '首页',
+                        lastBtnText: '尾页',
+                        prevBtnText: '上一页',
+                        nextBtnText: '下一页',
+                        showInfo: true,
+                        showJump: true,
+                        jumpBtnText: '跳转',
+                        infoFormat: '{start} ~ {end}条，共{total}条'
+                    }, response.data.data.page)//传入请求参数
+                            .on("pageClicked", function (event, pageIndex) {
+                                temp.searchInfo.page = pageIndex + 1;
+                            }).on('jumpClicked', function (event, pageIndex) {
+                        temp.searchInfo.page = pageIndex + 1;
+                    });
+                }, function (error) {
+                    swal(error.body.msg);
+                });
+            },
+            userList: function () {
+                var url = "/api/user/findAll";
+                this.$http.post(url).then(function (response) {
+                    this.users = response.data.data;
+                }, function (error) {
+                    swal(error.body.msg);
+                });
+            },
+            roomList: function () {
+                var url = "/api/room/findAll";
+                this.$http.post(url).then(function (response) {
+                    this.rooms = response.data.data;
+                }, function (error) {
+                    swal(error.body.msg);
                 });
             }
         }
     });
 </script>
-
 </body>
 </html>

@@ -13,4 +13,8 @@ public interface UserMapper {
     User selectByMobile(String mobile);
 
     List<User> selectList(User user);
+
+    List<User> selectAll();
+
+    User selectById(Integer userId);
 }

@@ -2,7 +2,6 @@ package com.qintao.api;
 
 import com.github.pagehelper.PageInfo;
 import com.qintao.bean.Room;
-import com.qintao.bean.User;
 import com.qintao.common.ResponseResult;
 import com.qintao.common.RestResultEnum;
 import com.qintao.service.RoomService;
@@ -12,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/room")
@@ -35,5 +35,11 @@ public class RoomApiController {
     public ResponseResult addRoom(@RequestBody Room room) {
         roomService.add(room);
         return new ResponseResult(RestResultEnum.SUCCESS);
+    }
+
+    @PostMapping("findAll")
+    public ResponseResult<List<Room>> findAll() {
+        List<Room> list = roomService.findAll();
+        return new ResponseResult<>(list);
     }
 }

@@ -25,4 +25,17 @@
       </if>
     </where>
   </select>
+  
+  <select id="selectAll" resultType="com.qintao.bean.Room">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM tb_room
+  </select>
+
+  <select id="selectById" resultType="com.qintao.bean.Room">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM tb_room
+    WHERE id = #{id}
+  </select>
 </mapper>

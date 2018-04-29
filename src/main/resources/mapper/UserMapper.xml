@@ -40,4 +40,18 @@
       </if>
     </where>
   </select>
+  
+  <select id="selectAll" resultType="com.qintao.bean.User">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM tb_user
+    WHERE role = 0
+  </select>
+
+  <select id="selectById" resultType="com.qintao.bean.User">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM tb_user
+    WHERE id = #{id}
+  </select>
 </mapper>

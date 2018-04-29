@@ -12,4 +12,9 @@ public class MeetingController {
     public String list() {
         return "/meeting/list";
     }
+
+    @GetMapping("apply")
+    public String apply() {
+        return "/meeting/apply";
+    }
 }

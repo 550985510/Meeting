@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 /**
  * @author 木叶丸
@@ -96,5 +97,11 @@ public class UserApiController {
     public ResponseResult<PageInfo<User>> findList(@RequestBody User user) {
         PageInfo<User> pageInfo = userService.findList(user);
         return new ResponseResult<>(pageInfo);
+    }
+
+    @PostMapping("findAll")
+    public ResponseResult<List<User>> findAll() {
+        List<User> list = userService.findAll();
+        return new ResponseResult<>(list);
     }
 }

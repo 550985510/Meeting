@@ -3,6 +3,8 @@ package com.qintao.service;
 import com.github.pagehelper.PageInfo;
 import com.qintao.bean.User;
 
+import java.util.List;
+
 public interface UserService {
 
     /**
@@ -31,4 +33,10 @@ public interface UserService {
      * @return 用户列表信息
      */
     PageInfo<User> findList(User user);
+
+    /**
+     * 查询所有用户
+     * @return 用户列表信息
+     */
+    List<User> findAll();
 }

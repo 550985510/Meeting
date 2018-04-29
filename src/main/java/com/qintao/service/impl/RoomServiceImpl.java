@@ -27,4 +27,9 @@ public class RoomServiceImpl implements RoomService {
     public void add(Room room) {
         roomMapper.insert(room);
     }
+
+    @Override
+    public List<Room> findAll() {
+        return roomMapper.selectAll();
+    }
 }

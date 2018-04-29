@@ -62,7 +62,13 @@
                         <i class="iconfont nav_right">&#xe697;</i>
                     </a>
                     <ul class="sub-menu">
-                        <li>
+                        <li v-if="role == 0">
+                            <a _href="/meeting/apply">
+                                <i class="iconfont">&#xe6a7;</i>
+                                <cite>会议申请</cite>
+                            </a>
+                        </li>
+                        <li v-if="role == 1">
                             <a _href="/meeting/list">
                                 <i class="iconfont">&#xe6a7;</i>
                                 <cite>会议列表</cite>
