@@ -1,5 +1,6 @@
 package com.qintao.api;
 
+import com.github.pagehelper.PageInfo;
 import com.qintao.bean.User;
 import com.qintao.common.ResponseResult;
 import com.qintao.common.RestResultEnum;
@@ -52,6 +53,35 @@ public class UserApiController {
     }
 
     /**
+     * 用户注册
+     * @param user 注册信息
+     * @param session session
+     * @return 操作状态
+     */
+    @PostMapping("/register")
+    public ResponseResult register(@RequestBody User user, HttpSession session) {
+        //判断手机号是否可用
+        User exist = userService.findByMobile(user.getMobile());
+        if (exist != null) {
+            return new ResponseResult(RestResultEnum.ERROR_MOBILE_EXIST);
+        }
+        String salt = SecurityPasswordUtils.getSalt();
+        String passphrase = SecurityPasswordUtils.getPassphrase(salt, user.getPassword());
+        user.setSalt(salt);
+        user.setPassword(passphrase);
+        user.setRole(0);
+        userService.add(user);
+        session.setAttribute(AdminSecurityConfig.SESSION_KEY, user);
+        return new ResponseResult(RestResultEnum.SUCCESS);
+    }
+
+    @PostMapping("/logout")
+    public ResponseResult logout(HttpSession session) {
+        session.removeAttribute(AdminSecurityConfig.SESSION_KEY);
+        return new ResponseResult(RestResultEnum.SUCCESS);
+    }
+
+    /**
      * 添加用户
      * @param user 用户信息
      * @return 操作状态
@@ -60,5 +90,11 @@ public class UserApiController {
     public ResponseResult addUser(@RequestBody User user) {
         userService.add(user);
         return new ResponseResult(RestResultEnum.SUCCESS);
+    }
+
+    @PostMapping("/list")
+    public ResponseResult<PageInfo<User>> findList(@RequestBody User user) {
+        PageInfo<User> pageInfo = userService.findList(user);
+        return new ResponseResult<>(pageInfo);
     }
 }

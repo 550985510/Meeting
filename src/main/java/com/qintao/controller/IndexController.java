@@ -1,5 +1,6 @@
 package com.qintao.controller;
 
+import com.qintao.config.AdminSecurityConfig;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -17,9 +18,9 @@ public class IndexController {
     @GetMapping("/login")
     public String login(HttpServletRequest request) {
         HttpSession session = request.getSession();
-//        if (session.getAttribute(AdminSecurityConfig.SESSION_KEY) != null) {
-//            return "index";
-//        }
+        if (session.getAttribute(AdminSecurityConfig.SESSION_KEY) != null) {
+            return "index";
+        }
         return "/login";
     }
 

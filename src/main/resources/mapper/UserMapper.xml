@@ -27,4 +27,17 @@
     WHERE mobile = #{mobile}
   </select>
 
+  <select id="selectList" resultType="com.qintao.bean.User">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM tb_user
+    <where>
+      <if test="mobile != null and mobile != ''">
+        mobile = #{mobile}
+      </if>
+      <if test="name != null and name != ''">
+        name = #{name}
+      </if>
+    </where>
+  </select>
 </mapper>

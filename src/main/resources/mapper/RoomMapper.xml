@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qintao.mapper.RoomMapper">
+  <sql id="Base_Column_List">
+    id, name, location, number, status, created_time
+  </sql>
+
+  <insert id="insert">
+    INSERT INTO tb_room
+    (name, location, number, created_time)
+    VALUES
+    (#{name}, #{location}, #{number}, now())
+  </insert>
+
+  <select id="selectList" resultType="com.qintao.bean.Room">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM tb_room
+    <where>
+      <if test="status != null and status != ''">
+        status = #{status}
+      </if>
+      <if test="name != null and name != ''">
+        AND name = #{name}
+      </if>
+    </where>
+  </select>
+</mapper>

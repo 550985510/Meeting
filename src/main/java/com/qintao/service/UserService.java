@@ -1,5 +1,6 @@
 package com.qintao.service;
 
+import com.github.pagehelper.PageInfo;
 import com.qintao.bean.User;
 
 public interface UserService {
@@ -23,4 +24,11 @@ public interface UserService {
      * @param user 用户信息
      */
     void add(User user);
+
+    /**
+     * 分页查询用户列表信息
+     * @param user 查询条件
+     * @return 用户列表信息
+     */
+    PageInfo<User> findList(User user);
 }

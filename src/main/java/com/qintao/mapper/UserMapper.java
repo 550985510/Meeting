@@ -2,6 +2,8 @@ package com.qintao.mapper;
 
 import com.qintao.bean.User;
 
+import java.util.List;
+
 public interface UserMapper {
 
     void insert(User user);
@@ -9,4 +11,6 @@ public interface UserMapper {
     User selectForLogin(User user);
 
     User selectByMobile(String mobile);
+
+    List<User> selectList(User user);
 }

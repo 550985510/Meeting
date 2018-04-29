@@ -1,5 +1,7 @@
 package com.qintao.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.qintao.bean.User;
 import com.qintao.mapper.UserMapper;
 import com.qintao.service.UserService;
@@ -7,6 +9,7 @@ import com.qintao.util.SecurityPasswordUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -50,5 +53,18 @@ public class UserServiceImpl implements UserService {
         user.setSalt(salt);
         user.setPassword(passphrase);
         userMapper.insert(user);
+    }
+
+    /**
+     * 分页查询用户列表信息
+     *
+     * @param user 查询条件
+     * @return 用户列表信息
+     */
+    @Override
+    public PageInfo<User> findList(User user) {
+        PageHelper.startPage(user.getPage(), user.getPageSize());
+        List<User> list = userMapper.selectList(user);
+        return new PageInfo<>(list);
     }
 }
