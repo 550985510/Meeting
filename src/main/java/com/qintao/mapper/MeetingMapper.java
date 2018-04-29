@@ -9,4 +9,8 @@ public interface MeetingMapper {
     void insert(Meeting meeting);
 
     List<Meeting> selectList(Meeting meeting);
+
+    List<Meeting> selectAll();
+
+    void update(Meeting meeting);
 }

@@ -31,4 +31,17 @@
       </if>
     </where>
   </select>
+
+  <select id="selectAll" resultType="com.qintao.bean.Meeting">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM tb_meeting
+    WHERE status = 1
+  </select>
+  
+  <update id="update">
+    UPDATE tb_meeting
+    SET status = #{status}
+    WHERE id = #{id}
+  </update>
 </mapper>

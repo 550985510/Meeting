@@ -51,7 +51,7 @@
                                         <option value="">全部</option>
                                         <option value="0">待审批</option>
                                         <option value="1">通过</option>
-                                        <option value="1">未通过</option>
+                                        <option value="2">未通过</option>
                                     </select>
                                 </div>
                             </div>
@@ -85,6 +85,7 @@
                                 <th>会议室名称</th>
                                 <th>会议室申请状态</th>
                                 <th>创建时间</th>
+                                <th>操作</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -101,6 +102,12 @@
                                     <label v-if="meeting.status === 2" class="label label-danger">未通过</label>
                                 </td>
                                 <td>{{meeting.createdTime}}</td>
+                                <td>
+                                    <button class="btn btn-info" v-if="meeting.status === 0" data-toggle='modal'
+                                            data-target="#examine" v-on:click="examine(meeting)">审批</button>
+                                    <label v-if="meeting.status === 1" class="label label-success">通过</label>
+                                    <label v-if="meeting.status === 2" class="label label-danger">未通过</label>
+                                </td>
                             </tr>
                             <tr>
                                 <td class="text-center" colspan="20" v-if="meetings.length == 0">没有数据 ！</td>
@@ -121,6 +128,30 @@
             </div>
         </div>
     </section>
+
+    <!-- 会议申请审批 -->
+    <div id="examine" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">会议申请审批</h4>
+                </div>
+                <div class="modal-body text-center">
+                    <button type="button" class="btn btn-danger btn-lg" v-on:click="noThrough">
+                        <i class="fa fa-times"></i> 审批不通过
+                    </button>
+                    <button type="button" class="btn btn-success btn-lg" v-on:click="passThrough">
+                        <i class="fa fa-check"></i> 审批通过
+                    </button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
 </div>
 <#include '../include/footer.ftl'/>
 <script src="<@s.url '/js/jquery.pagination-1.2.7.js'/>"></script>
@@ -143,7 +174,8 @@
             },
             meeting: {},
             users: [],
-            rooms: []
+            rooms: [],
+            examineMeeting: {}
         },
         created: function () {
             this.searchInfo.page = 1;
@@ -246,6 +278,63 @@
                     this.rooms = response.data.data;
                 }, function (error) {
                     swal(error.body.msg);
+                });
+            },
+            examine: function (meeting) {
+                this.examineMeeting = meeting;
+            },
+            passThrough: function () {
+                var that = this;
+                swal({
+                    title: "确定通过审批吗？",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "确定！",
+                    cancelButtonText: "取消！",
+                    closeOnConfirm: false,
+                    closeOnCancel: false
+                }, function (isConfirm) {
+                    if (isConfirm) {
+                        that.examineMeeting.status = 1;
+                        var url = "/api/meeting/examine";
+                        that.$http.post(url, that.examineMeeting).then(function (response) {
+                            $("#examine").modal('hide');
+                            swal("操作成功！", "", "success");
+                            that.query();
+                        }, function (error) {
+                            swal(error.body.msg);
+                        });
+                    } else {
+                        swal("取消！", "", "error");
+                    }
+                });
+            },
+            noThrough: function () {
+                var that = this;
+                swal({
+                    title: "确定不通过审批吗？",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "确定！",
+                    cancelButtonText: "取消！",
+                    closeOnConfirm: false,
+                    closeOnCancel: false
+                }, function (isConfirm) {
+                    if (isConfirm) {
+                        that.examineMeeting.status = 1;
+                        var url = "/api/meeting/examine";
+                        that.$http.post(url, that.examineMeeting).then(function (response) {
+                            $("#examine").modal('hide');
+                            swal("操作成功！", "", "success");
+                            that.query();
+                        }, function (error) {
+                            swal(error.body.msg);
+                        });
+                    } else {
+                        swal("取消！", "", "error");
+                    }
                 });
             }
         }

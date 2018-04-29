@@ -21,8 +21,6 @@ import java.util.List;
 @RequestMapping("/api/user")
 public class UserApiController {
 
-    private User currentUser = new User();
-
     @Resource
     private UserService userService;
 

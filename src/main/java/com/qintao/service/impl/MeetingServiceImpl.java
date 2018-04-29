@@ -34,4 +34,24 @@ public class MeetingServiceImpl implements MeetingService {
         }
         return new PageInfo<>(list);
     }
+
+    @Override
+    public List<Meeting> findAll() {
+        List<Meeting> list = meetingMapper.selectAll();
+        for (Meeting item : list) {
+            item.setRoomName(roomMapper.selectById(item.getRoomId()).getName());
+            item.setUserName(userMapper.selectById(item.getUserId()).getName());
+        }
+        return list;
+    }
+
+    @Override
+    public void insert(Meeting meeting) {
+        meetingMapper.insert(meeting);
+    }
+
+    @Override
+    public void examine(Meeting meeting) {
+        meetingMapper.update(meeting);
+    }
 }
