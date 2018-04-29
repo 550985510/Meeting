@@ -29,17 +29,6 @@
                                            class="form-control">
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <div class="input-group">
-                                    <label class="input-group-addon btn-default" for="mobile_input">会议室使用状态</label>
-                                    <select id="mobile_input" type="text" v-model="searchInfo.status"
-                                           class="form-control">
-                                        <option value="">全部</option>
-                                        <option value="0">空闲</option>
-                                        <option value="1">已预约</option>
-                                    </select>
-                                </div>
-                            </div>
                             <div class="form-group input-group">
                                 <span class="input-group-btn">
                                     <button type="button" class="btn btn-default" v-on:click="search">
@@ -57,7 +46,6 @@
                                 <th>会议室名称</th>
                                 <th>会议室地点</th>
                                 <th>会议室容纳人数</th>
-                                <th>使用状态</th>
                                 <th>创建时间</th>
                             </tr>
                             </thead>
@@ -67,8 +55,6 @@
                                 <td>{{room.name}}</td>
                                 <td>{{room.location}}</td>
                                 <td>{{room.number}}</td>
-                                <td v-if="room.status === 0">空闲</td>
-                                <td v-if="room.status === 1">已预约</td>
                                 <td>{{room.createdTime}}</td>
                             </tr>
                             <tr>

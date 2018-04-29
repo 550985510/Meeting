@@ -28,11 +28,6 @@ public class Room {
     private Integer number;
 
     /**
-     * 会议室使用状态
-     */
-    private Integer status;
-
-    /**
      * 创建时间
      */
     private Date createdTime;
