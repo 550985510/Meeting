@@ -68,6 +68,12 @@
                                 <cite>会议申请</cite>
                             </a>
                         </li>
+                        <li v-if="role == 0">
+                            <a _href="/meeting/history">
+                                <i class="iconfont">&#xe6a7;</i>
+                                <cite>我的申请记录</cite>
+                            </a>
+                        </li>
                         <li v-if="role == 1">
                             <a _href="/meeting/list">
                                 <i class="iconfont">&#xe6a7;</i>

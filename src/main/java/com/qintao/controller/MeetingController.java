@@ -17,4 +17,9 @@ public class MeetingController {
     public String apply() {
         return "/meeting/apply";
     }
+
+    @GetMapping("history")
+    public String history() {
+        return "/meeting/history";
+    }
 }
