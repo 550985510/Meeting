@@ -17,7 +17,7 @@
     <include refid="Base_Column_List"/>
     FROM tb_meeting
     <where>
-      <if test="status != null and status != ''">
+      <if test="status != null">
         status = #{status}
       </if>
       <if test="userId != null and userId != ''">

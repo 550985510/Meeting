@@ -323,7 +323,7 @@
                     closeOnCancel: false
                 }, function (isConfirm) {
                     if (isConfirm) {
-                        that.examineMeeting.status = 1;
+                        that.examineMeeting.status = 2;
                         var url = "/api/meeting/examine";
                         that.$http.post(url, that.examineMeeting).then(function (response) {
                             $("#examine").modal('hide');
